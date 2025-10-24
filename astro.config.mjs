@@ -1,11 +1,8 @@
-// @ts-check
-
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
+import netlify from '@astrojs/netlify'; // or 'static' is fine too
 
-// https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
-	integrations: [mdx(), sitemap()],
+  output: 'static',        // 'server' or 'static' also fine; hybrid works with functions if needed
+  adapter: netlify(),
+  integrations: [],
 });
