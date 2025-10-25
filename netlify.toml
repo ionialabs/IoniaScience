@@ -2,12 +2,9 @@
   command = "astro build"
   publish = "dist"
 
+[build.environment]
+  ASTRO_SITE = "https://science.ionialabs.com"
+  NODE_VERSION = "20"
+
 [functions]
   node_bundler = "esbuild"
-
-# Optional: force https + canonical host (once domain is set)
-[[redirects]]
-  from = "http://science.ionialabs.com/*"
-  to = "https://science.ionialabs.com/:splat"
-  status = 301
-  force = true
