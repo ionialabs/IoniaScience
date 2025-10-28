@@ -1,155 +1,196 @@
-/*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+@import url("./fonts.css");
 
-:root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-		rgba(var(--gray), 33%);
-}
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-regular.woff") format("woff");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-bold.woff") format("woff");
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
-body {
-	font-family: "Atkinson", sans-serif;
-	margin: 0;
-	padding: 0;
-	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
-}
-main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
-	line-height: 1.2;
-}
-h1 {
-	font-size: 3.052em;
-}
-h2 {
-	font-size: 2.441em;
-}
-h3 {
-	font-size: 1.953em;
-}
-h4 {
-	font-size: 1.563em;
-}
-h5 {
-	font-size: 1.25em;
-}
-strong,
-b {
-	font-weight: 700;
-}
-a {
-	color: var(--accent);
-}
-a:hover {
-	color: var(--accent);
-}
-p {
-	margin-bottom: 1em;
-}
-.prose p {
-	margin-bottom: 2em;
-}
-textarea {
-	width: 100%;
-	font-size: 16px;
-}
-input {
-	font-size: 16px;
-}
-table {
-	width: 100%;
-}
-img {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
-}
-code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
-}
-pre {
-	padding: 1.5em;
-	border-radius: 8px;
-}
-pre > code {
-	all: unset;
-}
-blockquote {
-	border-left: 4px solid var(--accent);
-	padding: 0 0 0 20px;
-	margin: 0px;
-	font-size: 1.333em;
-}
-hr {
-	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
-}
-@media (max-width: 720px) {
-	body {
-		font-size: 18px;
-	}
-	main {
-		padding: 1em;
-	}
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* tailwind plugins */
+@plugin "@tailwindcss/forms";
+
+/* dark mode */
+@variant dark (&:where(.dark, .dark *));
+
+/* theme definition import */
+@import "./tailwind-theme.css";
+
+/* other imports into specific layers */
+@import "./mos.css" layer(utilities);
+@import "./markdown-content.css" layer(components);
+@import "./buttons.css" layer(components);
+
+/* layer definitions */
+@layer theme, base, components, utilities;
+
+@layer base {
+  :root {
+    /* starwind component variables */
+    --background: var(--color-base-100);
+    --foreground: var(--color-base-900);
+    --card: var(--color-base-50);
+    --card-foreground: var(--color-base-950);
+    --popover: var(--color-base-50);
+    --popover-foreground: var(--color-base-950);
+    --primary: var(--color-primary-700);
+    --primary-foreground: var(--color-base-50);
+    --secondary: var(--color-fuchsia-700);
+    --secondary-foreground: var(--color-base-50);
+    --muted: var(--color-base-100);
+    --muted-foreground: var(--color-base-600);
+    --accent: var(--color-base-200);
+    --accent-foreground: var(--color-base-900);
+    --info: var(--color-sky-300);
+    --info-foreground: var(--color-sky-950);
+    --success: var(--color-green-300);
+    --success-foreground: var(--color-green-950);
+    --warning: var(--color-amber-300);
+    --warning-foreground: var(--color-amber-950);
+    --error: var(--color-red-700);
+    --error-foreground: var(--color-base-50);
+    --border: var(--color-base-300);
+    --input: var(--color-base-100);
+    --outline: var(--color-base-950);
+
+    --radius: 0.5rem;
+
+    /* custom shiki styling for markdown code blocks. These are the variables Astro uses
+		Shiki Themes: https://shiki.style/themes   https://shiki.matsu.io/guide/theme-colors#css-variables-theme */
+    --astro-code-foreground: var(--color-base-50);
+    --astro-code-background: #202022;
+    --astro-code-token-constant: #a5b4fc; /* recommend making this a slightly off color from your primary-300 color */
+    --astro-code-token-string: var(--color-primary-600);
+    --astro-code-token-comment: var(--color-base-400);
+    --astro-code-token-keyword: var(--color-base-300);
+    --astro-code-token-parameter: var(--color-sky-400);
+    --astro-code-token-function: var(--color-base-50);
+    --astro-code-token-string-expression: var(--color-primary-300);
+    --astro-code-token-punctuation: var(--color-base-200);
+    --astro-code-token-link: var(--color-base-50);
+
+    --font-fallback:
+      "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial",
+      "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+    font-family: "Inter", var(--font-fallback);
+    font-feature-settings:
+      "liga" 1,
+      "calt" 1; /* fix for Chrome */
+  }
+
+  @supports (font-variation-settings: normal) {
+    :root {
+      font-family: "InterVariable", var(--font-fallback);
+    }
+  }
+
+  .dark {
+    /* starwind dark theme config */
+    --background: var(--color-base-900);
+    --foreground: var(--color-base-100);
+    --card: oklch(1% 0 0);
+    --card-foreground: var(--color-base-100);
+    --popover: oklch(1% 0 0);
+    --popover-foreground: var(--color-base-100);
+    --primary: var(--color-primary-400);
+    --primary-foreground: oklch(1% 0 0);
+    --secondary: var(--color-fuchsia-300);
+    --secondary-foreground: oklch(1% 0 0);
+    --muted: var(--color-base-900);
+    --muted-foreground: var(--color-base-400);
+    --accent: var(--color-base-900);
+    --accent-foreground: var(--color-base-100);
+    --info: var(--color-sky-300);
+    --info-foreground: var(--color-sky-950);
+    --success: var(--color-green-300);
+    --success-foreground: var(--color-green-950);
+    --warning: var(--color-amber-300);
+    --warning-foreground: var(--color-amber-950);
+    --error: var(--color-red-800);
+    --error-foreground: oklch(99% 0 0);
+    --border: var(--color-base-800);
+    --input: var(--color-base-800);
+    --outline: var(--color-base-50);
+  }
+
+  /* starwind preflight merged with Cosmic Themes */
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply bg-background text-foreground leading-[1.6rem] scheme-light dark:scheme-dark;
+    scroll-behavior: smooth;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    /* prevent layout shift */
+    scrollbar-gutter: stable;
+  }
+  button {
+    @apply cursor-pointer;
+  }
 }
 
-.sr-only {
-	border: 0;
-	padding: 0;
-	margin: 0;
-	position: absolute !important;
-	height: 1px;
-	width: 1px;
-	overflow: hidden;
-	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
-	clip: rect(1px 1px 1px 1px);
-	/* maybe deprecated but we need to support legacy browsers */
-	clip: rect(1px, 1px, 1px, 1px);
-	/* modern browsers, clip-path works inwards from each corner */
-	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
-	white-space: nowrap;
+@layer components {
+  .h1 {
+    @apply text-3xl font-medium md:text-4xl;
+  }
+
+  .h2 {
+    @apply text-3xl font-medium;
+  }
+
+  .h3 {
+    @apply text-xl font-medium;
+  }
+
+  .description {
+    @apply text-base-700 dark:text-base-300 md:text-lg;
+  }
+
+  /* styles navbar links */
+  .nav__link--base {
+    @apply text-base-900 hover:text-base-600 dark:text-base-200/90 dark:hover:text-base-50 leading-tight transition;
+  }
+
+  .site-container {
+    @apply mx-auto max-w-[1100px] px-4;
+  }
+
+  /* used for newsletter, and contact form inputs */
+  .form__input {
+    @apply border-base-300 bg-base-100 hover:border-primary-500 dark:border-base-600/60 dark:bg-base-800 w-full rounded-md border px-3 transition;
+    @apply focus:border-primary-500 focus-visible:ring-primary-500/50 focus-visible:ring-2;
+    @apply outline-none;
+
+    &::placeholder {
+      @apply text-base-400;
+    }
+  }
+}
+
+@layer utilities {
+  /* used with select field */
+  .sr-only {
+    @apply sr-only;
+  }
+
+  /* focus utility class (for when user is tabbing through items on page) */
+  .primary-focus {
+    @apply focus-visible:outline-primary-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-2;
+  }
+
+  /* main gradient. Used for tags and some headings */
+  .main-text-gradient {
+    @apply from-primary-800 to-primary-600 dark:from-primary-400 dark:to-primary-200 bg-gradient-to-r bg-clip-text text-transparent;
+  }
+
+  /* use with "animate-pause" to pause a CSS animation */
+  .pause {
+    animation-play-state: paused !important;
+  }
+
+  /* weird tailwind v4 fixes necessary for some components. These may not be necessary once it is out of beta */
+  /* currently in v4 beta you cannot apply non-standard tailwind classes to elements within css layers. 
+  So we can't use "main-text-gradient" here, and the classes are instead copied */
+  .colored-title {
+    @apply from-primary-800 to-primary-600 dark:from-primary-400 dark:to-primary-200 bg-gradient-to-r bg-clip-text text-lg text-transparent;
+  }
 }

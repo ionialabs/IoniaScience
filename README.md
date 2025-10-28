@@ -1,46 +1,113 @@
-# Astro Starter Kit: Blog
+# Welcome to Galaxy!
 
-```sh
-npm create astro@latest -- --template blog
+This theme uses Astro v5 and Tailwind CSS v4, and includes some of my up-coming Starwind UI components and setup. These are more accessible and stable components than I was previously creating and I am excited to hear what you think of them.
+
+## Quickstart
+
+1. To get started, first install all necessary packages with `npm install` or `pnpm install`, then run an initial build to make sure the setup works `npm run build` or `pnpm build`.
+2. Copy the Pagefind build (for site search) to be available for the dev environment. This varies depending on your OS. I've created a few commands to help.
+   - For Windows, run `npm run winsearch`
+   - For OSX or Linux, run `npm run osxsearch`
+3. Next, you'll want to configure your site i18n setup (one language, or multiple). Simply run the command `npm run config-i18n` and follow the script instructions to get setup! For further information, see the [i18n documentation](https://cosmicthemes.com/docs/i18n/).
+4. Now you can setup the site to your liking!
+   - [Style customization](https://cosmicthemes.com/docs/styles/)
+   - [Content editing](https://cosmicthemes.com/docs/content/)
+   - [Animations](https://cosmicthemes.com/docs/animations/)
+   - [Keystatic CMS](https://cosmicthemes.com/docs/keystatic/) - if you don't want Keystatic you can run `npm run remove-keystatic`
+   - [Forms](https://cosmicthemes.com/docs/contact-form/)
+
+Should you need any assistance, send me a message at support@cosmicthemes.com
+
+## Code Intro
+
+I have created a few code tours to help introduce you to the codebase. You will need the extension [Code Tour](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.codetour) to view them in VSCode.
+
+## Code Structure
+
+The source files have the following setup. Note that not all files are included - it is already long, no one wants it to be longer.
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
+.
+├── .tours/
+│   └── code-intro.tour
 ├── public/
+│   ├── favicons/
+│   │   └── favicon.ico
+│   └── robots.txt
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
+│   ├── assets/
+│   │   ├── images/
+│   │   │   └── hero.jpg
+│   │   └── videos/
+│   │       └── demo.mp4
+│   ├── components/
+│   │   ├── Hero/
+│   │   │   ├── Hero1.astro
+│   │   │   └── Hero2.astro
+│   │   └── Footer/
+│   │       └── Footer.astro
+│   ├── config/
+│   │   ├── siteSettings.json.ts
+│   │   └── translationData.json.ts
+│   ├── content/
+│   │   ├── authors/
+│   │   ├── blog/
+│   │   └── otherPages/
+│   ├── icons/
+│   │   └── tabler/
+│   ├── js/
+│   │   └── textUtils.ts
+│   ├── layouts/
+│   │   ├── BaseHead.astro
+│   │   └── BaseLayout.astro
+│   ├── pages/
+│   │   ├── index.astro
+│   │   ├── blog/
+│   │   │   ├── index.astro
+│   │   │   └── [...slug].astro
+│   │   ├── examples/
+│   │   │   └── (contains example pages so you can see how to use components)
+│   │   ├── [page].astro
+│   │   ├── 404.astro
+│   │   ├── contact.astro
+│   │   ├── index.astro
+│   │   ├── login.astro
+│   │   ├── overview.astro (links to example pages)
+│   │   ├── password-reset.astro
+│   │   ├── signup.astro
+│   │   └── rss.xml.ts
+│   ├── styles/
+│   │   ├── buttons.css (button styles)
+│   │   ├── global.css (global styles)
+│   │   └── markdown-content.css (styling for markdown pages)
+│   └── content.config.ts
+├── .gitignore
+├── .prettierrc.mjs
 ├── astro.config.mjs
-├── README.md
+├── netlify.toml
 ├── package.json
+├── README.md
 └── tsconfig.json
 ```
+
+For robots like Google to see the correct sitemap, you will want to edit the `public/robots.txt` file to use your website domain.
+
+## More Resources
+
+- See my blog post on [recommended Astro web development setup](https://cosmicthemes.com/blog/astro-web-development-setup/).
+- You can learn more information from the [theme docs](https://cosmicthemes.com/docs/) page on the [Cosmic Themes Website](https://cosmicthemes.com/).
+- For support, see the [support page](https://cosmicthemes.com/support/).
+- [License details](https://cosmicthemes.com/license/)
+
+## General Astro Info
 
 Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
 There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+Any static assets, like images, can be placed in the `public/` directory. I also frequently use `src/assets` for images when using Astro asssets for image optimization.
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
+### Commands
 
 All commands are run from the root of the project, from a terminal:
 
@@ -53,10 +120,6 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-## 👀 Want to learn more?
+### Want to learn more?
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Feel free to check [the documentation](https://docs.astro.build) or jump into the [Discord server](https://astro.build/chat).

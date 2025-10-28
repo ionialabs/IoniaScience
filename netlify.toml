@@ -1,10 +1,14 @@
+[dev]
+  command = "npm run dev"
+  framework = "astro"
+
 [build]
-  command = "astro build"
+  command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions/"
 
-[build.environment]
-  ASTRO_SITE = "https://science.ionialabs.com"
-  NODE_VERSION = "20"
-
-[functions]
-  node_bundler = "esbuild"
+# [[redirects]]
+#   from = "/api/*" # simplify all calls to serverless functions
+#   to = "/.netlify/functions/:splat" # all function calls will go to this path
+#   status = 200 # ok code
+#   force = true # ensure to always redirect
