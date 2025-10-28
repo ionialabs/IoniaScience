@@ -1,9 +1,9 @@
 [dev]
-  command = "npm run dev"
+  command = "pnpm run dev"
   framework = "astro"
 
 [build]
-  command = "npm run build"
+  command = "pnpm run build"
   publish = "dist"
   functions = "netlify/functions/"
 
