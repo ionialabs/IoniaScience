@@ -1,0 +1,53 @@
+---
+title: "ANUBI: A Platform for Affinity Optimization of Proteins and Peptides in Drug Design"
+pubDate: 2025-11-28
+paperDate: 2025-11-26
+authors:
+  - main-author
+doi: "10.1101/2025.10.20.683353"
+pdf_url: "https://www.biorxiv.org/content/10.1101/2025.10.20.683353v1.full.pdf?download=1"
+source_url: "https://doi.org/10.1101/2025.10.20.683353"
+journal: "bioRxiv"
+categories:
+  - Biology
+  - Medicine & Health
+description: |
+  Meet ANUBI: a digital platform that explores proteins like a celestial map, finding better drug
+  candidates by simulating their binding affinities.
+heroImage: ./heroImage.png
+---
+
+Imagine we could tinker with the building blocks of life, crafting proteins and peptides with the knack to bind more tightly to disease targets, like finding the perfect key for every lock. The quest for better drugs is much like searching the cosmos: vast, intricate, and, until now, slow. But the researchers behind ANUBI have built a new kind of tool—a digital compass guiding us across the landscape of possibility, mapping paths where better medicines might lie.
+
+> **TL;DR**
+> - ANUBI automates the search for protein and peptide drugs with improved binding, predicting closer matches in weeks, not months.
+> - The platform merges smart simulation and sequence design, saving time and cost over standard experimental drug screens.
+
+![Figure 4. Simulation of antibody mutation during affinity maturation against Cx43 showing mutation sites and changes in binding energy over time.](./figure-1.png)
+*Figure 4. Simulation of antibody mutation during affinity maturation against Cx43 showing mutation sites and changes in binding energy over time.*
+
+Drug design often begins with a coveted question: how well does a candidate molecule stick to its biological target? In the world of proteins and peptides—molecules made of chains of amino acids—this is a puzzle with countless possible answers. Traditional methods test one possibility after another in the lab, but this process is slow and expensive, like fishing in a vast ocean with a single line.
+
+Computational models have started to help. Programs like AutoDock Vina and learning-based tools can screen thousands of small molecules quickly, but when it comes to larger, more flexible protein-to-protein or protein-to-peptide interactions, they struggle. These connections aren't just about static snapshots; they are more like intricate dances, where tiny changes can yield big differences in binding strength. Most existing scoring methods don't catch these subtleties.
+
+![Figure 5. Monte Carlo simulation of peptide affinity maturation against TIGIT showing initial docking, mutation sites, and binding energy changes during the...](./figure-2.png)
+*Figure 5. Monte Carlo simulation of peptide affinity maturation against TIGIT showing initial docking, mutation sites, and binding energy changes during the...*
+
+ANUBI (Anubi Nexus for Understanding Binding Interactions) tries to remedy this gap. Its creators describe a two-part computational platform: one part explores the vast sequence space—different possible protein or peptide variants—using a Monte Carlo engine (a method that, borrowing from the world of gambling, makes smart random changes and keeps the winners). The other part calculates how tightly each new candidate would grasp its target, using advanced molecular dynamics (MD) simulations combined with a method called MMPBSA to estimate binding free energies. This dual strategy allows ANUBI to mimic, at digital speed, the selection processes that might take months or years in the real world, and it does so with minimal input and expertise required from users beyond providing an initial molecular model.
+
+When put to the test, ANUBI was set loose on two sample cases: an antibody-antigen interaction and a peptide-protein complex—both classic targets in modern drug discovery. Within about twenty days of computational exploration running on a standard GPU, ANUBI generated dozens of candidate molecules, identifying variants predicted (by simulation) to bind roughly 20 kilocalories per mole better than their starting ancestors. This is a considerable improvement by computational or experimental standards, all at a far lower cost than standard laboratory screens.
+
+![Figure 1. ANUBI workflow showing how it modifies a protein-ligand structure, tests changes, and selects sequences with improved binding affinity.](./figure-3.png)
+*Figure 1. ANUBI workflow showing how it modifies a protein-ligand structure, tests changes, and selects sequences with improved binding affinity.*
+
+The true promise of such tools, if borne out by experimental validation, is profound. For pharmaceutical developers, ANUBI could mean drafting higher-affinity drugs more quickly, using less physical material and fewer resources. For patients, it might, in the future, translate to more effective therapies, discovered with greater speed.
+
+Yet, we must temper our excitement. ANUBI’s predictions, though impressively detailed, still depend on the quality of the input molecular models and simulations—a process that, like celestial navigation, can falter if the underlying maps are not accurate. Laboratory validation is still crucial, for biology always holds surprises. Still, every voyage across unexplored sequence space starts with a good map, and ANUBI promises to be a compass for the molecular explorers of tomorrow.
+
+![Figure 6. Results from 35 ANUBI Monte Carlo runs showing changes in binding energy for the Cx43 antibody complex during the process.](./figure-4.png)
+*Figure 6. Results from 35 ANUBI Monte Carlo runs showing changes in binding energy for the Cx43 antibody complex during the process.*
+
+## Sources
+
+- [https://doi.org/10.1101/2025.10.20.683353](https://doi.org/10.1101/2025.10.20.683353)
+- DOI: [10.1101/2025.10.20.683353](https://doi.org/10.1101/2025.10.20.683353)
