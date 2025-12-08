@@ -128,6 +128,10 @@ const navConfig: navItem[] = [
     text: "Blog",
     link: "/blog/",
   },
+  {
+    text: "Apps",
+    link: "/apps/",
+  },
   // uncomment below to add a dropdown example
   // {
   // 	text: "Dropdown",
