@@ -24,3 +24,5 @@
 3. Build the blog writer that consumes the handoff payload
 4. Add draft MDX output into this repo
 5. Later add optional figure extraction / full-text enrichment / Manim handoff
+
+<!-- preview rebuild trigger: 2026-03-21 -->
