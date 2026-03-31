@@ -1,5 +1,4 @@
 ---
-import Button from "@components/Button/Button.astro";
 import LanguageSelect from "@components/LanguageSelect/LanguageSelect.astro";
 import MobileNav from "@components/Nav/MobileNav/MobileNav.astro";
 import NavDropdownToggle from "@components/Nav/NavDropdown/NavDropdownToggle.astro";
@@ -9,8 +8,6 @@ import SiteLogo from "@components/SiteLogo/SiteLogo.astro";
 import ThemeToggle from "@components/ThemeToggle/ThemeToggle.astro";
 import { getLocaleFromUrl } from "@js/localeUtils";
 import { getTranslatedData } from "@js/translationUtils";
-
-import { getLocalizedRoute } from "@/js/translationUtils";
 
 import MegaMenuDropdownToggle from "./NavDropdown/MegaMenuDropdownToggle.astro";
 
@@ -59,19 +56,6 @@ import { locales } from "@config/siteSettings.json";
             </nav>
             <div class="flex items-center">
               <ThemeToggle class="hidden md:flex" />
-              <Button
-                variant="ghost"
-                href={getLocalizedRoute(currLocale, "/login")}
-                class="hidden whitespace-nowrap md:flex"
-              >
-                Sign In
-              </Button>
-              <Button
-                variant="primary"
-                href={getLocalizedRoute(currLocale, "/signup")}
-                class="hidden whitespace-nowrap md:flex">Sign up</Button
-              >
-
               <Search class="md:ml-2" />
 
               {locales.length > 1 && <LanguageSelect class="ml-2 hidden md:flex" />}

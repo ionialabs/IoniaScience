@@ -31,7 +31,9 @@ export async function getAllPosts(
   lang?: (typeof locales)[number],
 ): Promise<CollectionEntry<"blog">[]> {
   const posts = await getCollection("blog", ({ data }) => {
-    // filter out draft posts
+    // in local dev, include drafts for LAN/localhost review
+    if (import.meta.env.DEV) return true;
+    // otherwise filter out draft posts
     return data.draft !== true;
   });
 

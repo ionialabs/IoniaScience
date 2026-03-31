@@ -9,12 +9,18 @@ import { defineConfig } from "astro/config";
 import AutoImport from "astro-auto-import";
 import icon from "astro-icon";
 
+const isBuild = process.argv.includes("build");
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://galaxy.cosmicthemes.com",
-  adapter: netlify({
-    imageCDN: false,
-  }),
+  ...(isBuild
+    ? {
+        adapter: netlify({
+          imageCDN: false,
+        }),
+      }
+    : {}),
   redirects: {
     "/admin": "/keystatic",
   },
@@ -34,12 +40,8 @@ export default defineConfig({
     },
   },
   integrations: [
-    // example auto import component into blog post mdx files
     AutoImport({
-      imports: [
-        // https://github.com/delucis/astro-auto-import
-        "@components/Admonition/Admonition.astro",
-      ],
+      imports: ["@components/Admonition/Admonition.astro"],
     }),
     mdx(),
     react(),
@@ -49,15 +51,13 @@ export default defineConfig({
     compress({
       HTML: true,
       JavaScript: true,
-      CSS: false, // enabling this can cause issues
-      Image: false, // astro:assets handles this. Enabling this can dramatically increase build times
-      SVG: false, // astro-icon handles this
+      CSS: false,
+      Image: false,
+      SVG: false,
     }),
   ],
-
   vite: {
     plugins: [tailwindcss()],
-    // stop inlining short scripts to fix issues with ClientRouter
     build: {
       assetsInlineLimit: 0,
     },
