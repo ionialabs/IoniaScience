@@ -1,4 +1,5 @@
 ---
+import PostCard from "@components/PostCard/PostCard.astro";
 import PostCardLarge from "@components/PostCard/PostCardLarge.astro";
 import { getAllPosts } from "@js/blogUtils";
 import { getLocaleFromUrl } from "@js/localeUtils";
@@ -87,7 +88,7 @@ const latestPosts = posts.slice(3, 9);
         </div>
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {latestPosts.map((post) => <PostCardLarge post={post} />)}
+          {latestPosts.map((post) => <PostCard post={post} showDescription={false} />)}
         </div>
       </section>
     )
