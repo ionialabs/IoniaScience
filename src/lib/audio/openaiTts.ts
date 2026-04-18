@@ -24,6 +24,12 @@ export async function generateSpeechMp3(text: string): Promise<{ buffer: Buffer;
 
   if (!response.ok) {
     const errorText = await response.text();
+    if (response.status === 401) {
+      throw new Error('TTS authentication failed. Check OPENAI_API_KEY in the preview environment.');
+    }
+    if (response.status === 429) {
+      throw new Error('TTS is temporarily rate-limited. Please try again shortly.');
+    }
     throw new Error(`OpenAI TTS failed: ${response.status} ${errorText}`);
   }
 

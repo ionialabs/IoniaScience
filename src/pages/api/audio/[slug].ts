@@ -77,12 +77,10 @@ export const GET: APIRoute = async ({ params }) => {
       },
     });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ ok: false, error: error instanceof Error ? error.message : 'Unknown TTS error' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
+    const message = error instanceof Error ? error.message : 'Unknown TTS error';
+    return new Response(JSON.stringify({ ok: false, error: message, detail: message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };

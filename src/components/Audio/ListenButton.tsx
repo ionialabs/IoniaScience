@@ -32,10 +32,12 @@ export default function ListenButton({ slug }: Props) {
         const contentType = res.headers.get('content-type') || '';
         if (contentType.includes('application/json')) {
           const data = await res.json();
-          errorMessage = data?.error || errorMessage;
+          errorMessage = data?.error || data?.detail || errorMessage;
         } else {
           const text = await res.text();
-          if (text) errorMessage = text;
+          if (text && !text.includes('<!DOCTYPE') && !text.includes('<html')) {
+            errorMessage = text;
+          }
         }
         throw new Error(errorMessage);
       }
