@@ -89,7 +89,7 @@ export const GET: APIRoute = async ({ params }) => {
         });
       }
     }
-    return new Response(JSON.stringify({ ok: false, error: 'Audio generation already in progress' }), {
+    return new Response(JSON.stringify({ ok: false, pending: true, error: 'Audio generation already in progress' }), {
       status: 202,
       headers: { 'Content-Type': 'application/json' },
     });

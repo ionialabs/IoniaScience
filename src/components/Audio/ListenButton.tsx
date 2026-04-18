@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   slug: string;
@@ -8,6 +8,34 @@ export default function ListenButton({ slug }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
+  const pollTimeoutRef = useRef<number | null>(null);
+
+  const requestAudio = async () => {
+    const res = await fetch(`/api/audio/${slug}`);
+    const data = await res.json();
+    if (res.status === 202 || data?.pending) {
+      setStatus('loading');
+      setMessage('Audio is being prepared...');
+      pollTimeoutRef.current = window.setTimeout(() => {
+        void requestAudio();
+      }, 4000);
+      return;
+    }
+    if (!res.ok || !data?.audioUrl) {
+      throw new Error(data?.error || 'Audio generation failed');
+    }
+    setAudioUrl(data.audioUrl);
+    setStatus('ready');
+    setMessage('');
+  };
+
+  useEffect(() => {
+    return () => {
+      if (pollTimeoutRef.current !== null) {
+        window.clearTimeout(pollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const onClick = async () => {
     if (audioUrl) {
@@ -17,19 +45,7 @@ export default function ListenButton({ slug }: Props) {
     setStatus('loading');
     setMessage('Generating audio...');
     try {
-      const res = await fetch(`/api/audio/${slug}`);
-      const data = await res.json();
-      if (res.status === 202) {
-        setStatus('loading');
-        setMessage('Audio is being prepared, try again in a few seconds.');
-        return;
-      }
-      if (!res.ok || !data?.audioUrl) {
-        throw new Error(data?.error || 'Audio generation failed');
-      }
-      setAudioUrl(data.audioUrl);
-      setStatus('ready');
-      setMessage('');
+      await requestAudio();
     } catch (error) {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'Audio unavailable right now');
@@ -42,7 +58,7 @@ export default function ListenButton({ slug }: Props) {
         <button
           type="button"
           onClick={onClick}
-          disabled={status === 'loading'}
+          disabled={false}
           className="inline-flex w-fit items-center rounded-md bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition opacity-100 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {audioUrl ? 'Play article audio' : status === 'loading' ? 'Preparing audio...' : 'Listen to this article'}

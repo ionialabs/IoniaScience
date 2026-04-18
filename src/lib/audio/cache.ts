@@ -50,11 +50,22 @@ export async function writeAudioMeta(metaPath: string, meta: AudioMeta) {
   await fs.writeFile(metaPath, JSON.stringify(meta, null, 2));
 }
 
-export async function acquireLock(lockPath: string): Promise<boolean> {
+export async function acquireLock(lockPath: string, staleAfterMs = 10 * 60 * 1000): Promise<boolean> {
   try {
     await fs.writeFile(lockPath, String(Date.now()), { flag: 'wx' });
     return true;
   } catch {
+    try {
+      const raw = await fs.readFile(lockPath, 'utf-8');
+      const ts = Number(raw.trim());
+      if (Number.isFinite(ts) && Date.now() - ts > staleAfterMs) {
+        await fs.unlink(lockPath);
+        await fs.writeFile(lockPath, String(Date.now()), { flag: 'wx' });
+        return true;
+      }
+    } catch {
+      // ignore and fall through
+    }
     return false;
   }
 }
