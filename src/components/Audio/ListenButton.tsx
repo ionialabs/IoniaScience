@@ -8,31 +8,12 @@ export default function ListenButton({ slug }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
-  const pollTimeoutRef = useRef<number | null>(null);
-
-  const requestAudio = async () => {
-    const res = await fetch(`/api/audio/${slug}`);
-    const data = await res.json();
-    if (res.status === 202 || data?.pending) {
-      setStatus('loading');
-      setMessage('Audio is being prepared...');
-      pollTimeoutRef.current = window.setTimeout(() => {
-        void requestAudio();
-      }, 4000);
-      return;
-    }
-    if (!res.ok || !data?.audioUrl) {
-      throw new Error(data?.error || 'Audio generation failed');
-    }
-    setAudioUrl(data.audioUrl);
-    setStatus('ready');
-    setMessage('');
-  };
+  const objectUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
     return () => {
-      if (pollTimeoutRef.current !== null) {
-        window.clearTimeout(pollTimeoutRef.current);
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
       }
     };
   }, []);
@@ -45,7 +26,28 @@ export default function ListenButton({ slug }: Props) {
     setStatus('loading');
     setMessage('Generating audio...');
     try {
-      await requestAudio();
+      const res = await fetch(`/api/audio/${slug}`);
+      if (!res.ok) {
+        let errorMessage = 'Audio generation failed';
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          errorMessage = data?.error || errorMessage;
+        } else {
+          const text = await res.text();
+          if (text) errorMessage = text;
+        }
+        throw new Error(errorMessage);
+      }
+      const blob = await res.blob();
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+      }
+      const nextUrl = URL.createObjectURL(blob);
+      objectUrlRef.current = nextUrl;
+      setAudioUrl(nextUrl);
+      setStatus('ready');
+      setMessage('');
     } catch (error) {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'Audio unavailable right now');
