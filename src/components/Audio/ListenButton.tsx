@@ -61,9 +61,13 @@ export default function ListenButton({ slug }: Props) {
           type="button"
           onClick={onClick}
           disabled={false}
-          className="inline-flex w-fit items-center rounded-md bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition opacity-100 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex w-fit items-center gap-2 rounded-md bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition opacity-100 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          aria-label={audioUrl ? 'Play article audio' : 'Generate and play article audio'}
         >
-          {audioUrl ? 'Play article audio' : status === 'loading' ? 'Preparing audio...' : 'Listen to this article'}
+          <span aria-hidden="true" className="text-base leading-none">
+            {audioUrl ? '🔊' : status === 'loading' ? '⏳' : '🔈'}
+          </span>
+          <span>{audioUrl ? 'Play article audio' : status === 'loading' ? 'Preparing audio...' : 'Listen to this article'}</span>
         </button>
 
         {message && <p className="text-sm opacity-80">{message}</p>}
