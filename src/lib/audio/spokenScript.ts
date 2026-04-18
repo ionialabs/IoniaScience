@@ -1,48 +1,75 @@
-import { createHash } from 'node:crypto';
+import crypto from 'node:crypto';
 
-export interface SpokenScriptPayload {
+export const SCRIPT_VERSION = 'v1';
+
+interface SpokenScriptInput {
   slug: string;
   title: string;
-  description?: string | null;
+  description?: string;
   content: string;
 }
 
-export interface SpokenScriptResult {
-  text: string;
-  hash: string;
+function stripFrontmatter(source: string): string {
+  return source.replace(/^---[\s\S]*?---\s*/m, '');
 }
 
-const SOURCE_SECTION_REGEX = /(^|\n)##\s+Sources[\s\S]*$/i;
-const FRONTMATTER_REGEX = /^---[\s\S]*?---\s*/;
-const IMAGE_REGEX = /!\[[^\]]*\]\([^)]*\)/g;
-const LINK_REGEX = /\[([^\]]+)\]\([^)]*\)/g;
-const HTML_TAG_REGEX = /<[^>]+>/g;
-const BLOCKQUOTE_PREFIX_REGEX = /^>\s?/gm;
-const EMPHASIS_REGEX = /[*_`#]+/g;
-const MULTISPACE_REGEX = /[ \t]+/g;
-const MULTINEWLINE_REGEX = /\n{3,}/g;
-
-export function buildSpokenScript(payload: SpokenScriptPayload): SpokenScriptResult {
-  const sections = [payload.title.trim(), payload.description?.trim() || '', payload.content].filter(Boolean);
-  const raw = sections.join('\n\n');
-  const cleaned = normalizeForSpeech(raw);
-  const hash = createHash('sha256').update(cleaned).digest('hex');
-  return { text: cleaned, hash };
+function stripImports(source: string): string {
+  return source
+    .replace(/^import\s.+?;?$/gm, '')
+    .replace(/^export\s.+?;?$/gm, '');
 }
 
-export function normalizeForSpeech(raw: string): string {
-  return raw
-    .replace(FRONTMATTER_REGEX, '')
-    .replace(SOURCE_SECTION_REGEX, '')
-    .replace(IMAGE_REGEX, ' ')
-    .replace(LINK_REGEX, '$1')
-    .replace(HTML_TAG_REGEX, ' ')
-    .replace(BLOCKQUOTE_PREFIX_REGEX, '')
-    .replace(EMPHASIS_REGEX, '')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(MULTISPACE_REGEX, ' ')
-    .replace(MULTINEWLINE_REGEX, '\n\n')
-    .trim();
+function stripJsxAndMdx(source: string): string {
+  return source
+    .replace(/<Figure[\s\S]*?<\/Figure>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\{[^}]*\}/g, ' ');
+}
+
+function stripMarkdown(source: string): string {
+  return source
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/`{1,3}[^`]*`{1,3}/g, ' ')
+    .replace(/^>+/gm, '')
+    .replace(/^[-*+]\s+/gm, '')
+    .replace(/^\d+\.\s+/gm, '')
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/[*_~]+/g, ' ');
+}
+
+function normalizeWhitespace(source: string): string {
+  return source.replace(/\s+/g, ' ').trim();
+}
+
+export function buildSpokenScript(input: SpokenScriptInput) {
+  const cleaned = normalizeWhitespace(
+    stripMarkdown(stripJsxAndMdx(stripImports(stripFrontmatter(input.content)))),
+  );
+
+  const text = normalizeWhitespace(
+    [
+      input.title,
+      input.description || '',
+      cleaned,
+      'End of article.',
+    ].join(' '),
+  );
+
+  const hash = crypto
+    .createHash('sha256')
+    .update(JSON.stringify({
+      version: SCRIPT_VERSION,
+      slug: input.slug,
+      title: input.title,
+      description: input.description || '',
+      text,
+    }))
+    .digest('hex');
+
+  return {
+    text,
+    hash,
+    version: SCRIPT_VERSION,
+  };
 }

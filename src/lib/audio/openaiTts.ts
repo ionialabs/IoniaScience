@@ -1,10 +1,16 @@
 const DEFAULT_MODEL = 'gpt-4o-mini-tts';
 const DEFAULT_VOICE = 'marin';
 
-export async function generateSpeechMp3(text: string): Promise<{ buffer: Buffer; model: string; voice: string; mimeType: string }> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error('Missing OPENAI_API_KEY for TTS generation');
+function getRequiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required env var: ${name}`);
+  }
+  return value;
+}
 
+export async function generateSpeechMp3(input: string) {
+  const apiKey = getRequiredEnv('OPENAI_API_KEY');
   const model = process.env.OPENAI_TTS_MODEL || DEFAULT_MODEL;
   const voice = process.env.OPENAI_TTS_VOICE || DEFAULT_VOICE;
 
@@ -17,7 +23,7 @@ export async function generateSpeechMp3(text: string): Promise<{ buffer: Buffer;
     body: JSON.stringify({
       model,
       voice,
-      input: text,
+      input,
       format: 'mp3',
     }),
   });
@@ -36,8 +42,8 @@ export async function generateSpeechMp3(text: string): Promise<{ buffer: Buffer;
   const arrayBuffer = await response.arrayBuffer();
   return {
     buffer: Buffer.from(arrayBuffer),
+    mimeType: response.headers.get('content-type') || 'audio/mpeg',
     model,
     voice,
-    mimeType: 'audio/mpeg',
   };
 }

@@ -6,6 +6,7 @@ import { getCollection } from 'astro:content';
 
 import { generateSpeechMp3 } from '@/lib/audio/openaiTts';
 import { buildSpokenScript } from '@/lib/audio/spokenScript';
+import { getAudioStoragePath, getStoredAudioUrl, uploadAudioToStorage } from '@/lib/audio/storage';
 
 export const prerender = false;
 
@@ -26,6 +27,7 @@ export const GET: APIRoute = async ({ params }) => {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
   if (post.data.draft === true) {
     return new Response(JSON.stringify({ error: 'Audio is unavailable for draft posts' }), {
       status: 403,
@@ -64,18 +66,33 @@ export const GET: APIRoute = async ({ params }) => {
       description: post.data.description,
       content,
     });
-    const tts = await generateSpeechMp3(script.text);
 
-    return new Response(tts.buffer, {
-      status: 200,
-      headers: {
-        'Content-Type': tts.mimeType,
-        'Cache-Control': 'public, max-age=0, s-maxage=86400',
-        'X-Audio-Content-Hash': script.hash,
-        'X-Audio-Model': tts.model,
-        'X-Audio-Voice': tts.voice,
+    const storagePath = getAudioStoragePath(slug, script.hash);
+    const existingUrl = await getStoredAudioUrl(storagePath);
+    if (existingUrl) {
+      return new Response(JSON.stringify({ ok: true, audioUrl: existingUrl, cached: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const tts = await generateSpeechMp3(script.text);
+    const audioUrl = await uploadAudioToStorage(storagePath, tts.buffer, tts.mimeType);
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        audioUrl,
+        cached: false,
+        contentHash: script.hash,
+        voice: tts.voice,
+        model: tts.model,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
       },
-    });
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown TTS error';
     return new Response(JSON.stringify({ ok: false, error: message, detail: message }), {
