@@ -28,7 +28,7 @@ export default function ListenButton({ slug }: Props) {
     try {
       const res = await fetch(`/api/audio/${slug}`);
       if (!res.ok) {
-        let errorMessage = 'Audio generation failed';
+        let errorMessage = `Audio generation failed (${res.status})`;
         const contentType = res.headers.get('content-type') || '';
         if (contentType.includes('application/json')) {
           const data = await res.json();
@@ -37,6 +37,12 @@ export default function ListenButton({ slug }: Props) {
           const text = await res.text();
           if (text && !text.includes('<!DOCTYPE') && !text.includes('<html')) {
             errorMessage = text;
+          } else if (res.status === 500) {
+            errorMessage = 'Server-side TTS failed in preview. Check function logs or runtime environment.';
+          } else if (res.status === 404) {
+            errorMessage = 'Audio route was not found in preview.';
+          } else if (res.status === 502 || res.status === 503 || res.status === 504) {
+            errorMessage = `Preview function failed upstream (${res.status}).`;
           }
         }
         throw new Error(errorMessage);
@@ -52,6 +58,10 @@ export default function ListenButton({ slug }: Props) {
       setMessage('');
     } catch (error) {
       setStatus('error');
+      if (error instanceof TypeError) {
+        setMessage('Network or preview function error while requesting audio.');
+        return;
+      }
       setMessage(error instanceof Error ? error.message : 'Audio unavailable right now');
     }
   };
