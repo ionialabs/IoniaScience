@@ -4,9 +4,8 @@ import path from 'node:path';
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
-import { generateSpeechMp3 } from '@/lib/audio/openaiTts';
 import { buildSpokenScript } from '@/lib/audio/spokenScript';
-import { getAudioStoragePath, getStoredAudioUrl, uploadAudioToStorage } from '@/lib/audio/storage';
+import { getAudioStoragePath, getStoredAudioUrl } from '@/lib/audio/storage';
 
 export const prerender = false;
 
@@ -69,30 +68,17 @@ export const GET: APIRoute = async ({ params }) => {
 
     const storagePath = getAudioStoragePath(slug, script.hash);
     const existingUrl = await getStoredAudioUrl(storagePath);
-    if (existingUrl) {
-      return new Response(JSON.stringify({ ok: true, audioUrl: existingUrl, cached: true }), {
-        status: 200,
+    if (!existingUrl) {
+      return new Response(JSON.stringify({ error: 'Article audio has not been generated yet.' }), {
+        status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const tts = await generateSpeechMp3(script.text);
-    const audioUrl = await uploadAudioToStorage(storagePath, tts.buffer, tts.mimeType);
-
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        audioUrl,
-        cached: false,
-        contentHash: script.hash,
-        voice: tts.voice,
-        model: tts.model,
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
+    return new Response(JSON.stringify({ ok: true, audioUrl: existingUrl, cached: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown TTS error';
     return new Response(JSON.stringify({ ok: false, error: message, detail: message }), {
