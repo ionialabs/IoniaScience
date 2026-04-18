@@ -1,4 +1,5 @@
 ---
+import ListenButton from "@components/Audio/ListenButton";
 import Button from "@components/Button/Button.astro";
 import Category from "@components/Category/Category.astro";
 import TableOfContents from "@components/TableOfContents/TableOfContents.astro";
@@ -129,6 +130,7 @@ const authorsData = await getEntries(authors);
               </div>
             )
           }
+          <ListenButton client:load slug={post.id} />
           <section id="blog-post-content" class="markdown-content mx-auto max-w-2xl lg:max-w-none">
             <slot />
           </section>

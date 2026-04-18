@@ -7,6 +7,10 @@ dist/
 # pagefind search for dev purposes
 public/pagefind/
 
+# runtime-generated article audio cache
+public/audio/*
+!public/audio/.gitkeep
+
 # dependencies
 node_modules/
 
