@@ -59,14 +59,19 @@ export const GET: APIRoute = async ({ params }) => {
   }
 
   try {
-    const script = buildSpokenScript({
-      slug,
-      title: post.data.title,
-      description: post.data.description,
-      content,
-    });
+    const metadataPath = (post.data as any).audioStoragePath || (post.data as any).audio_storage_path || null;
 
-    const storagePath = getAudioStoragePath(slug, script.hash);
+    let storagePath = metadataPath as string | null;
+    if (!storagePath) {
+      const script = buildSpokenScript({
+        slug,
+        title: post.data.title,
+        description: post.data.description,
+        content,
+      });
+      storagePath = getAudioStoragePath(slug, script.hash);
+    }
+
     const existingUrl = await getStoredAudioUrl(storagePath);
     if (!existingUrl) {
       return new Response(JSON.stringify({ error: 'Article audio has not been generated yet.' }), {
