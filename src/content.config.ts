@@ -25,6 +25,7 @@ const blogCollection = defineCollection({
       mappingKey: z.string().optional(),
       // blog posts will be excluded from build if draft is "true"
       draft: z.boolean().optional(),
+      audioStoragePath: z.string().optional(),
     }),
 });
 
