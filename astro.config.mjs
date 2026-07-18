@@ -13,7 +13,7 @@ const isBuild = process.argv.includes("build");
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://galaxy.cosmicthemes.com",
+  site: "https://ioniascience.com",
   ...(isBuild
     ? {
         adapter: netlify({
@@ -27,7 +27,7 @@ export default defineConfig({
   // i18n configuration must match src/config/translations.json.ts
   i18n: {
     defaultLocale: "en",
-    locales: ["en", "fr"],
+    locales: ["en"],
     routing: {
       prefixDefaultLocale: false,
     },

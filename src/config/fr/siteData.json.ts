@@ -4,9 +4,9 @@ import { type SiteDataProps } from "../types/configDataTypes";
 const siteData: SiteDataProps = {
   name: "IoniaScience",
   // Your website's title and description (meta fields)
-  title: "IoniaScience – Explorer la science spatiale et la recherche",
+  title: "IoniaScience – La science récente, rendue lisible",
   description:
-    "IoniaScience présente les recherches et projets d'Ionia Labs, avec un regard sur l'astronomie, l'exploration spatiale et la science derrière notre mission.",
+    "IoniaScience transforme les articles de recherche évalués par les pairs en récits scientifiques clairs et captivants — en biologie, médecine, neurosciences et au-delà — avec des applications interactives à venir.",
 
   // Your information for blog post purposes
   author: {
