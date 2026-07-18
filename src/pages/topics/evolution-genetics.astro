@@ -1,0 +1,138 @@
+---
+import PostCard from "@components/PostCard/PostCard.astro";
+import { getAllPosts } from "@js/blogUtils";
+import { getLocaleFromUrl } from "@js/localeUtils";
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+const currLocale = getLocaleFromUrl(Astro.url);
+const allPosts = await getAllPosts(currLocale);
+
+// Curated evolution & genetics keyword filter, matched against the post TITLE
+// only. Titles are high-signal; matching descriptions too pulls in figurative
+// uses ("the field evolved") and molecular-biology posts (every "RNA delivery"
+// study), so we keep it tight. The pipeline's richer topic metadata (primary_topic
+// etc.) is stripped by the content schema, so title is the best signal we have.
+const TOPIC_RE =
+  /\b(evolution|evolutionary|evolved|evolving|evolve|natural selection|speciation|phylogen\w*|heredit\w*|genome|genomic|genetic\w*|mutation|mutations|allele|chromosom\w*|crispr|gene drive|gene flow|ancestr\w*|lineage|domesticat\w*|adaptation|adaptive|dna)\b/i;
+
+const relatedPosts = allPosts
+  .filter((post) => TOPIC_RE.test(post.data.title))
+  .slice(0, 12);
+
+// The three Atlas evolution modules, in series order.
+const ATLAS_BASE = "https://atlas.ionialabs.com/mini";
+const modules = [
+  {
+    slug: "genetic-variation",
+    part: 1,
+    title: "Genetic Variation",
+    description:
+      "Start with identical genomes and watch mutation plus recombination generate diversity before selection begins.",
+  },
+  {
+    slug: "natural-selection",
+    part: 2,
+    title: "Natural Selection",
+    description:
+      "Apply climate pressure to evolving genomes and see adaptation, population collapse, or extinction play out.",
+  },
+  {
+    slug: "speciation",
+    part: 3,
+    title: "Speciation",
+    description:
+      "Cut off gene flow with a wall and watch one population drift into two separate species over time.",
+  },
+];
+---
+
+<BaseLayout
+  title="Evolution & Genetics – Topic guide"
+  description="Explore evolution and genetics at IoniaScience: play through an interactive three-part evolution simulation, then dig into related research stories from the blog."
+>
+  <section class="site-container pt-32 pb-12 md:pt-40">
+    <div class="max-w-3xl">
+      <p class="colored-title">Topic</p>
+      <h1 class="h1 mt-6">Evolution &amp; Genetics</h1>
+      <p class="description mt-6 max-w-2xl text-lg">
+        How does life change over time? Start hands-on with a three-part simulation — from the first
+        random mutations to the birth of a new species — then follow the science into real research
+        on genomes, adaptation, and the deep history written in DNA.
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive modules -->
+  <section class="site-container pb-16 md:pb-20">
+    <div class="mb-8">
+      <p class="colored-title">Play the simulation</p>
+      <h2 class="h2 mt-3">The evolution series</h2>
+      <p class="description mt-3 max-w-2xl">
+        Three connected modules — the genomes you evolve in one carry into the next. Run them in
+        order for the full story.
+      </p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        modules.map((mod) => (
+          <a
+            href={`${ATLAS_BASE}/${mod.slug}`}
+            target="_blank"
+            rel="noopener"
+            class="group flex flex-col rounded-2xl border border-black/10 p-6 transition hover:border-black/20 hover:bg-black/[0.02] dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/[0.03]"
+          >
+            <p class="colored-title mb-2 text-xs">Part {mod.part}</p>
+            <h3 class="text-xl font-semibold">{mod.title}</h3>
+            <p class="description mt-3 grow text-base">{mod.description}</p>
+            <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium opacity-80 transition group-hover:opacity-100">
+              Launch module
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="transition group-hover:translate-x-0.5"
+                aria-hidden="true"
+              >
+                <path d="M7 7h10v10" />
+                <path d="M7 17 17 7" />
+              </svg>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Related reading -->
+  {
+    relatedPosts.length > 0 && (
+      <section class="site-container pb-20 md:pb-28">
+        <div class="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <p class="colored-title">Related reading</p>
+            <h2 class="h2 mt-3">Evolution &amp; genetics on the blog</h2>
+          </div>
+          <a
+            href="/categories/biology/"
+            class="text-sm font-medium opacity-80 transition hover:opacity-100"
+          >
+            Browse all biology posts
+          </a>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {relatedPosts.map((post) => (
+            <PostCard post={post} showDescription={false} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
