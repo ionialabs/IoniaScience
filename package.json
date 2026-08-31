@@ -38,6 +38,7 @@
     "motion-on-scroll": "^1.0.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "sharp": "^0.33.0",
     "tailwind-merge": "^3.3.1",
     "tailwind-variants": "^3.1.1",
     "tailwindcss": "4.1.14",
